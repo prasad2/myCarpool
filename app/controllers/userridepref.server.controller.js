@@ -4,6 +4,8 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
+	errorHandler = require('./errors.server.controller'),
+	Userridepref = mongoose.model('Userridepref'),
     _ = require('lodash');
 
 /**
@@ -11,6 +13,20 @@ var mongoose = require('mongoose'),
  */
 exports.create = function(req, res) {
 
+  var newPref = new Userridepref(req.body);
+
+  newPref.save(function(err){
+
+  		if (err) {
+			res.status(400).send({
+
+				message : errorHandler.getErrorMessage(err)
+			});
+		}
+		else{
+			res.status(201).json(newPref);
+		}
+  });
 };
 
 /**
@@ -18,6 +34,28 @@ exports.create = function(req, res) {
  */
 exports.read = function(req, res) {
 
+	// getting objects by id
+
+	Userridepref.findById(req.params.prefId).exec(function(err, ridepref){
+
+		if (err) {
+			res.status(400).send({
+
+			message : errorHandler.getErrorMessage(err)
+			});
+		}
+		else{
+
+			if (!ridepref) {
+
+				return	res.status(404).send({
+					message : 'Ride preference not found'
+				});
+			}
+			res.json(ridepref);
+		}		
+
+	});
 };
 
 /**
@@ -39,4 +77,16 @@ exports.delete = function(req, res) {
  */
 exports.list = function(req, res) {
 
+	Userridepref.find().exec( function(err, userrideprefs){
+
+		if (err) {
+			res.status(400).send({
+
+				message : errorHandler.getErrorMessage(err)
+			});
+		}
+		else{
+			res.json(userrideprefs);
+		}
+	});
 };
