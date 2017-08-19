@@ -3,9 +3,14 @@
 module.exports = function(app) {
 	// Routing logic   
 	// ...
-	app.route('/userridepref')
-		.get( function(request, response){
+	var userrideprefs = require('../../app/controllers/userridepref.server.controller');
 
-			response.json([{'userpref':'ride'},{'userpref':'drive'}]);
-		});
+	app.route('/userridepref')
+		.get( userrideprefs.list);
+
+	app.route('/userridepref/newpref')
+		.post(userrideprefs.create);
+
+	app.route('/userridepref/:prefId')
+		.getElementsByTagName('')(userrideprefs.read);
 };
